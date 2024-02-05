@@ -1,4 +1,5 @@
 import { createReadStream } from "fs";
+import { Transform } from "stream";
 import { createHash } from "crypto";
 
 import { getAbsolutePath } from "../../utils/path.js";
@@ -14,24 +15,18 @@ export const hash = (args, currentDirectory) => {
     const [path] = args;
     const absolutePath = getAbsolutePath(path, currentDirectory);
 
-    const hash = new Promise((resolve, reject) => {
-      const hash = createHash("sha256");
-      const readable = createReadStream(absolutePath);
+    const readable = createReadStream(absolutePath);
 
-      readable.on("error", reject);
-      readable.on("data", (chunk) => hash.update(chunk));
-      readable.on("end", () => {
-        resolve(hash.digest("hex"));
-      });
+    const hashTransformStream = new Transform({
+      transform(chunk, encoding, callback) {
+        callback(null, createHash("sha256").update(chunk).digest("hex") + "\n");
+      },
     });
 
-    hash
-      .then((hash) => {
-        console.log(hash);
-        logCurrentDirectory(currentDirectory);
-      })
-      .catch((e) => {
-        handleFailedOperation();
-      });
+    hashTransformStream.on("finish", () =>
+      logCurrentDirectory(currentDirectory)
+    );
+
+    readable.pipe(hashTransformStream).pipe(process.stdout);
   }
 };
