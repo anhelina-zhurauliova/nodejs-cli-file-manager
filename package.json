@@ -1,0 +1,13 @@
+{
+  "name": "nodejs-cli-file-manager",
+  "version": "1.0.0",
+  "description": "CLI file manager",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "repository": "git@github.com:anhelina-zhurauliova/nodejs-cli-file-manager.git",
+  "author": "Anhelina Zhurauliova <anhelinazhurauliova@gmail.com>",
+  "license": "MIT"
+}
