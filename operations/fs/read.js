@@ -22,14 +22,11 @@ export const read = async (args, currentDirectory) => {
         createReadStream(absolutePath, {
           encoding: "utf8",
         });
-      let data = "";
 
-      readableStream.on("data", (chunk) => {
-        data += chunk;
-      });
+      readableStream.pipe(process.stdout);
 
       readableStream.on("end", () => {
-        process.stdout.write(data + "\n");
+        process.stdout.write("\n");
         logCurrentDirectory(currentDirectory);
       });
     }
